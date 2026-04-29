@@ -45,17 +45,19 @@
 }
 
 /* Neo-Brutalism Refined Utilities */
+@utility neo-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+}
+
+@utility neo-shadow-lg {
+  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+}
+
+@utility neo-shadow-sm {
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+}
+
 @layer utilities {
-  @utility neo-shadow {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  }
-  @utility neo-shadow-lg {
-    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-  }
-  @utility neo-shadow-sm {
-    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-  }
-  
   .neo-card {
     background-color: white;
     border-width: 2px;
