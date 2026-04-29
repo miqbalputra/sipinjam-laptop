@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
+import { generateActionToken } from "@/app/api/action/route";
 
 export async function POST(request: Request) {
   try {
@@ -52,6 +53,10 @@ export async function POST(request: Request) {
           settingsObj.admin_phone_3,
         ].filter(Boolean);
 
+        const baseUrl = process.env.NEXTAUTH_URL || "https://laptop.griyaquran.web.id";
+        const approveToken = generateActionToken(result.id, "approve");
+        const rejectToken = generateActionToken(result.id, "reject");
+
         await axios.post(settingsObj.n8n_webhook_url, {
           type: "NEW_REQUEST",
           transactionId: result.id,
@@ -60,6 +65,8 @@ export async function POST(request: Request) {
           laptopMerk: result.laptop.merk,
           purpose: purpose,
           adminPhones: adminPhones,
+          approveUrl: `${baseUrl}/api/action?token=${approveToken}`,
+          rejectUrl: `${baseUrl}/api/action?token=${rejectToken}`,
           timestamp: new Date().toISOString(),
         });
       }

@@ -1,5 +1,5 @@
 {
-  "name": "SiPinjam Laptop - WhatsApp Notifications",
+  "name": "SiPinjam Laptop - WhatsApp Notifications (GoWA)",
   "nodes": [
     {
       "parameters": {
@@ -16,7 +16,7 @@
     {
       "parameters": {
         "dataType": "string",
-        "value1": "={{$node[\"Webhook Trigger\"].json[\"type\"]}}",
+        "value1": "={{$node[\"Webhook Trigger\"].json[\"body\"][\"type\"]}}",
         "rules": {
           "rules": [
             {
@@ -38,69 +38,49 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.fonnte.com/send",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "YOUR_FONNTE_TOKEN"
-            }
-          ]
-        },
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "target",
-              "value": "={{$node[\"Webhook Trigger\"].json[\"adminPhones\"].join(',')}}"
-            },
-            {
-              "name": "message",
-              "value": "=🔔 *PENGAJUAN PINJAM LAPTOP BARU*\n\n👤 Nama: {{$node[\"Webhook Trigger\"].json[\"teacherName\"]}}\n💻 Unit: {{$node[\"Webhook Trigger\"].json[\"laptopMerk\"]}}\n📝 Keperluan: {{$node[\"Webhook Trigger\"].json[\"purpose\"]}}\n\nSilakan cek Dashboard Admin untuk Approval."
-            }
-          ]
-        }
+        "jsCode": "const adminPhones = $node[\"Webhook Trigger\"].json.body.adminPhones || [];\nreturn adminPhones.map(phone => ({ json: { phone, ...$node[\"Webhook Trigger\"].json.body } }));"
       },
-      "id": "a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6",
-      "name": "Notify Admins",
-      "type": "n8n-nodes-base.httpRequest",
+      "id": "cc11aa22-bb33-cc44-dd55-ee66ff778899",
+      "name": "Loop Admin Phones",
+      "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [700, 200]
+      "position": [650, 180]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.fonnte.com/send",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "YOUR_FONNTE_TOKEN"
-            }
-          ]
-        },
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "target",
-              "value": "={{$node[\"Webhook Trigger\"].json[\"teacherPhone\"]}}"
-            },
-            {
-              "name": "message",
-              "value": "=📋 *UPDATE STATUS PEMINJAMAN*\n\nHalo {{$node[\"Webhook Trigger\"].json[\"teacherName\"]}},\n\nPengajuan pinjam laptop *{{$node[\"Webhook Trigger\"].json[\"laptopMerk\"]}}* Anda telah: \n*{{$node[\"Webhook Trigger\"].json[\"action\"].toUpperCase()}}*\n\n{{$node[\"Webhook Trigger\"].json[\"action\"] == 'approve' ? 'Silakan ambil unit di ruang IT.' : 'Silakan hubungi admin untuk informasi lebih lanjut.'}}"
-            }
-          ]
+        "resource": "send",
+        "operation": "sendText",
+        "phone": "={{$json[\"phone\"]}}",
+        "message": "=\uD83D\uDD14 *PENGAJUAN PINJAM LAPTOP BARU*\n\n\uD83D\uDC64 Nama: {{$json[\"teacherName\"]}}\n\uD83D\uDCBB Unit: {{$json[\"laptopMerk\"]}}\n\uD83D\uDCDD Keperluan: {{$json[\"purpose\"]}}\n\u23F0 Waktu: {{$json[\"timestamp\"]}}\n\nSilakan buka Dashboard Admin untuk Approval.\n\uD83D\uDD17 https://laptop.griyaquran.web.id/login-admin"
+      },
+      "id": "a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6",
+      "name": "Notify Admin (GoWA)",
+      "type": "n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [880, 180],
+      "credentials": {
+        "gowaApi": {
+          "name": "GQ System"
         }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "send",
+        "operation": "sendText",
+        "phone": "={{$node[\"Webhook Trigger\"].json[\"body\"][\"teacherPhone\"]}}",
+        "message": "=\uD83D\uDCCB *UPDATE STATUS PEMINJAMAN*\n\nHalo *{{$node[\"Webhook Trigger\"].json[\"body\"][\"teacherName\"]}}*,\n\nPengajuan pinjam laptop *{{$node[\"Webhook Trigger\"].json[\"body\"][\"laptopMerk\"]}}* Anda telah:\n\n*{{$node[\"Webhook Trigger\"].json[\"body\"][\"action\"] == 'approve' ? '\u2705 DISETUJUI' : '\u274C DITOLAK'}}*\n\n{{$node[\"Webhook Trigger\"].json[\"body\"][\"action\"] == 'approve' ? 'Silakan ambil unit laptop di ruang IT. Terima kasih!' : 'Mohon hubungi Admin untuk informasi lebih lanjut.'}}\n\n_Sistem SiPinjam - Griya Quran_"
       },
       "id": "b2c3d4e5-f6a7-b8c9-d0e1-f2a3b4c5d6e7",
-      "name": "Notify Teacher",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 2,
-      "position": [700, 400]
+      "name": "Notify Teacher (GoWA)",
+      "type": "n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [700, 420],
+      "credentials": {
+        "gowaApi": {
+          "name": "GQ System"
+        }
+      }
     }
   ],
   "connections": {
@@ -119,14 +99,25 @@
       "main": [
         [
           {
-            "node": "Notify Admins",
+            "node": "Loop Admin Phones",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Notify Teacher",
+            "node": "Notify Teacher (GoWA)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Admin Phones": {
+      "main": [
+        [
+          {
+            "node": "Notify Admin (GoWA)",
             "type": "main",
             "index": 0
           }
