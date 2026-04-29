@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model Teacher {
+  id           String        @id @default(uuid())
+  name         String
+  gender       String // "L" atau "P"
+  division     String
+  phone        String
+  isActive     Boolean       @default(true)
+  transactions Transaction[]
+}
+
+model Laptop {
+  id            String        @id @default(uuid())
+  merk          String
+  serialNumber  String        @unique
+  color         String
+  fundingSource String
+  imageUrl      String?
+  status        String        @default("AVAILABLE") // AVAILABLE, BORROWED, MAINTENANCE
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id           String    @id @default(uuid())
+  teacherId    String
+  teacher      Teacher   @relation(fields: [teacherId], references: [id])
+  laptopId     String
+  laptop       Laptop    @relation(fields: [laptopId], references: [id])
+  borrowDate   DateTime  @default(now())
+  returnDate   DateTime?
+  status       String    @default("PENDING") // PENDING, APPROVED, REJECTED, RETURNED
+  rejectReason String?
+}

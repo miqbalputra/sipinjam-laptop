@@ -1,26 +1,69 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui;
+  --font-heading: var(--font-public-sans);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --primary: #A388EE;
+  --primary-foreground: #000000;
+  --secondary: #FFD033;
+  --secondary-foreground: #000000;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #A388EE;
+  --accent-foreground: #000000;
+  --destructive: #FF5252;
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+  --radius: 5px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Neo-Brutalism Refined Utilities */
+@layer utilities {
+  .neo-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  }
+  .neo-shadow-lg {
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+  }
+  .neo-shadow-hover:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+  }
+  .neo-shadow-active:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  }
+  .neo-card {
+    @apply bg-white border-2 border-black neo-shadow rounded-[5px];
+  }
+  .neo-button {
+    @apply border-2 border-black neo-shadow transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-bold uppercase tracking-wider;
+  }
 }
