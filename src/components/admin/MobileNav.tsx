@@ -8,9 +8,10 @@ import {
   Laptop as LaptopIcon, 
   History, 
   Settings,
-  Menu
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { signOut } from "next-auth/react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Home", href: "/admin", color: "bg-[#FFD033]" },
@@ -24,7 +25,7 @@ export default function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-4 border-black px-2 pb-safe">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-4 border-black px-1 pb-safe">
       <div className="flex justify-between items-center h-16 max-w-md mx-auto">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
@@ -35,26 +36,39 @@ export default function MobileNav() {
               className="flex-1 flex flex-col items-center justify-center gap-1 group relative"
             >
               <div className={cn(
-                "w-10 h-10 border-2 border-black flex items-center justify-center transition-all",
+                "w-9 h-9 border-2 border-black flex items-center justify-center transition-all",
                 isActive 
                   ? cn(item.color, "neo-shadow -translate-y-1 scale-110") 
                   : "bg-white group-active:scale-95"
               )}>
-                <item.icon size={18} strokeWidth={3} className="text-black" />
+                <item.icon size={16} strokeWidth={3} className="text-black" />
               </div>
               <span className={cn(
-                "text-[8px] font-black uppercase tracking-tighter transition-all",
+                "text-[7px] font-black uppercase tracking-tighter transition-all",
                 isActive ? "text-black opacity-100" : "text-zinc-400"
               )}>
                 {item.label}
               </span>
-              
+
               {isActive && (
                 <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-black rounded-full" />
               )}
             </Link>
           );
         })}
+
+        {/* Tombol Logout */}
+        <button
+          onClick={() => signOut({ callbackUrl: "/login-admin" })}
+          className="flex-1 flex flex-col items-center justify-center gap-1 group relative"
+        >
+          <div className="w-9 h-9 border-2 border-black bg-black flex items-center justify-center transition-all group-active:scale-95 group-active:opacity-80">
+            <LogOut size={16} strokeWidth={3} className="text-white" />
+          </div>
+          <span className="text-[7px] font-black uppercase tracking-tighter text-red-500">
+            Keluar
+          </span>
+        </button>
       </div>
     </nav>
   );
