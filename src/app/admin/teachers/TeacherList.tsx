@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Teacher } from "@prisma/client";
 import TeacherForm from "./TeacherForm";
@@ -33,8 +33,13 @@ export default function TeacherList({ initialTeachers }: TeacherListProps) {
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [targetTeacher, setTargetTeacher] = useState<Teacher | null>(null);
-  
+
   const router = useRouter();
+
+  // Sync state saat server refetch data setelah router.refresh()
+  useEffect(() => {
+    setTeachers(initialTeachers);
+  }, [initialTeachers]);
 
   const handleToggleStatus = async () => {
     if (!targetTeacher) return;

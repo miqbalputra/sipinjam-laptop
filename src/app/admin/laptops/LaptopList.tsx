@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Laptop } from "@prisma/client";
 import LaptopForm from "./LaptopForm";
@@ -33,8 +33,13 @@ export default function LaptopList({ initialLaptops }: LaptopListProps) {
   const [editingLaptop, setEditingLaptop] = useState<Laptop | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [targetLaptop, setTargetLaptop] = useState<Laptop | null>(null);
-  
+
   const router = useRouter();
+
+  // Sync state saat server refetch data setelah router.refresh()
+  useEffect(() => {
+    setLaptops(initialLaptops);
+  }, [initialLaptops]);
 
   const handleDelete = async () => {
     if (!targetLaptop) return;

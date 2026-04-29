@@ -94,3 +94,47 @@ export async function PUT(request: Request) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    await checkAuth();
+    const { searchParams } = new URL(request.url);
+    const from = searchParams.get("from");
+    const to = searchParams.get("to");
+
+    if (!from || !to) {
+      return NextResponse.json({ message: "Parameter 'from' dan 'to' diperlukan." }, { status: 400 });
+    }
+
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    toDate.setHours(23, 59, 59, 999); // sampai akhir hari
+
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+      return NextResponse.json({ message: "Format tanggal tidak valid." }, { status: 400 });
+    }
+
+    // Cari transaksi APPROVED yang laptop-nya perlu direset
+    const approvedTx = await prisma.transaction.findMany({
+      where: { borrowDate: { gte: fromDate, lte: toDate }, status: "APPROVED" },
+      select: { laptopId: true },
+    });
+
+    if (approvedTx.length > 0) {
+      await prisma.laptop.updateMany({
+        where: { id: { in: approvedTx.map(t => t.laptopId) } },
+        data: { status: "AVAILABLE" },
+      });
+    }
+
+    // Hapus semua transaksi dalam periode
+    const result = await prisma.transaction.deleteMany({
+      where: { borrowDate: { gte: fromDate, lte: toDate } },
+    });
+
+    return NextResponse.json({ deleted: result.count });
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
