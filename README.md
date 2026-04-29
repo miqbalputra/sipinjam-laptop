@@ -6,23 +6,26 @@ Aplikasi web untuk mengelola peminjaman laptop di lingkungan sekolah. Dibangun d
 
 ## 🗺️ Alur Sistem
 
-```
-Guru                    Sistem                    Admin
- │                        │                         │
- ├─ Buka /pinjam          │                         │
- ├─ Isi Form Peminjaman ──►                         │
- │                        ├─ Simpan ke DB (PENDING) │
- │                        ├─ Kirim Webhook ke n8n   │
- │                        │       │                 │
- │                        │       └─ WA ke Admin ──►│
- │                        │           ✅ SETUJUI     │
- │                        │           ❌ TOLAK       │
- │                        │                         │
- │                        │◄── Klik Link Approval ──┤
- │                        ├─ Update Status DB        │
- │                        ├─ Kirim Webhook ke n8n   │
- │◄── WA Notifikasi ──────┤                         │
- │    (Approved/Rejected) │                         │
+```mermaid
+sequenceDiagram
+    participant Guru
+    participant Sistem as Sistem (Next.js)
+    participant n8n as n8n (Webhook)
+    participant Admin
+
+    Guru->>Sistem: Isi Form Peminjaman (/pinjam)
+    Sistem->>Sistem: Simpan Transaksi (Status: PENDING)
+    Sistem->>n8n: Kirim Webhook (NEW_REQUEST)
+    n8n->>Admin: Kirim WhatsApp (Detail + Link Approval)
+    
+    Note over Admin: Admin Memeriksa Detail
+    
+    Admin->>Sistem: Klik Link (Approve/Reject)
+    Sistem->>Sistem: Update Status (APPROVED/REJECTED)
+    Sistem->>n8n: Kirim Webhook (STATUS_UPDATE)
+    n8n->>Guru: Kirim WhatsApp (Notifikasi Keputusan)
+    
+    Note over Guru: Jika Approved, Guru Ambil Laptop
 ```
 
 ---
