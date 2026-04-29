@@ -163,6 +163,8 @@ async function processAction(
           teacherName: existing.teacher.name,
           teacherPhone: existing.teacher.phone,
           laptopMerk: existing.laptop.merk,
+          laptopSerial: existing.laptop.serialNumber,
+          laptopColor: existing.laptop.color,
           rejectReason: action === "reject" ? rejectReason : null,
           timestamp: new Date().toISOString(),
         });

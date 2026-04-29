@@ -63,6 +63,8 @@ export async function POST(request: Request) {
           teacherName: result.teacher.name,
           teacherPhone: result.teacher.phone,
           laptopMerk: result.laptop.merk,
+          laptopSerial: result.laptop.serialNumber,
+          laptopColor: result.laptop.color,
           purpose: purpose,
           adminPhones: adminPhones,
           approveUrl: `${baseUrl}/api/action?token=${approveToken}`,
