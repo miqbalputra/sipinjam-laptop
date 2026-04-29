@@ -46,24 +46,37 @@
 
 /* Neo-Brutalism Refined Utilities */
 @layer utilities {
-  .neo-shadow {
+  @utility neo-shadow {
     box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
   }
-  .neo-shadow-lg {
+  @utility neo-shadow-lg {
     box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
   }
-  .neo-shadow-hover:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
-  }
-  .neo-shadow-active:active {
-    transform: translate(1px, 1px);
+  @utility neo-shadow-sm {
     box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
   }
+  
   .neo-card {
-    @apply bg-white border-2 border-black neo-shadow rounded-[5px];
+    background-color: white;
+    border-width: 2px;
+    border-color: black;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    border-radius: 5px;
   }
+  
   .neo-button {
-    @apply border-2 border-black neo-shadow transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none font-bold uppercase tracking-wider;
+    border-width: 2px;
+    border-color: black;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .neo-button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
   }
 }
