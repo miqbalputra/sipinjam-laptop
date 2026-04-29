@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Laptop } from "@/generated/prisma/client";
+import { Laptop } from "@prisma/client";
 import LaptopForm from "./LaptopForm";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import {

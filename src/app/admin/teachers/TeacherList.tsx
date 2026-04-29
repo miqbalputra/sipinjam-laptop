@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Teacher } from "@/generated/prisma/client";
+import { Teacher } from "@prisma/client";
 import TeacherForm from "./TeacherForm";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import {

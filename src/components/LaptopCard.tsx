@@ -1,4 +1,4 @@
-import { Laptop } from "@/generated/prisma/client";
+import { Laptop } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Monitor, Calendar, User, ArrowRight, ShieldAlert } from "lucide-react";
 import Link from "next/link";
